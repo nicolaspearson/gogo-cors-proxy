@@ -6,7 +6,7 @@ networks:
 
 services:
   go-proxy:
-    image: nicolaspearson/gogo-cors-proxy:1.0
+    image: nicpearson/gogo-cors-proxy:1.0
     container_name: go-proxy
     build:
       context: .

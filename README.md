@@ -34,11 +34,11 @@ Now all incoming requests on port `8181` will be proxied to `http://0.0.0.0:8080
 
 ## Docker
 
-Ensure you have Docker installed before continuing.
+The Docker image is hosted on [Docker Hub](https://hub.docker.com/r/nicpearson/gogo-cors-proxy/)
 
 ### Using The Docker Image
 
-Please see the `docker-compose.yml` file an example of how the image may be used.
+Please see the `docker-compose.yml` file for an example of how the image may be used.
 
 ### Building The Docker Image
 
