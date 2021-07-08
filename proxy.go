@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"bytes"
 )
 
 var (
@@ -65,12 +66,19 @@ func handleReverseRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(r.Body)
+	body := buf.String()
+
+	logger("Body", body);
+
 	// create the request to server
-	req, err := http.NewRequest(r.Method, toCall, r.Body)
+	req, err := http.NewRequest(r.Method, toCall, strings.NewReader(body))
 
 	// add ALL headers to the connection
 	for n, h := range r.Header {
 		for _, h := range h {
+			logger("header:", n, " value ", h)
 			req.Header.Add(n, h)
 		}
 	}
@@ -87,6 +95,7 @@ func handleReverseRequest(w http.ResponseWriter, r *http.Request) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}
+	req.TransferEncoding = []string{"identity"}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
