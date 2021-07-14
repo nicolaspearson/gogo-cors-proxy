@@ -9,7 +9,13 @@ import (
 	"net/http"
 	"strings"
 	"bytes"
+	"github.com/kardianos/service"
 )
+
+const serviceName = "Netpositive Cors Proxy service"
+const serviceDescription = "for Cash Register"
+
+type program struct{}
 
 var (
 	// host:port to proxy requests to
@@ -147,7 +153,7 @@ func logger(v ...interface{}) {
 	}
 }
 
-func main() {
+func (p program) Start(s service.Service) error {
 	flag.StringVar(&target, "target", target, "host:port to proxy requests to")
 	flag.StringVar(&listen, "listen", listen, "host:port to listen on")
 	flag.StringVar(&protocol, "protocol", protocol, "protocol used by the target")
@@ -161,4 +167,29 @@ func main() {
 	http.HandleFunc("/", handleReverseRequest)
 	log.Println(listen, "-->", target)
 	http.ListenAndServe(listen, nil)
+	return nil
+}
+
+func (p program) Stop(s service.Service) error {
+   fmt.Println(s.String() + " stopped")
+   return nil
+}
+
+func main() {
+   serviceConfig := &service.Config{
+      Name:        serviceName,
+      DisplayName: serviceName,
+      Description: serviceDescription,
+   }
+
+   prg := &program{}
+   s, err := service.New(prg, serviceConfig)
+   if err != nil {
+      fmt.Println("Cannot create the service: " + err.Error())
+   }
+   err = s.Run()
+   if err != nil {
+      fmt.Println("Cannot start the service: " + err.Error())
+   }
+
 }
