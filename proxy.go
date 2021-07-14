@@ -154,6 +154,12 @@ func logger(v ...interface{}) {
 }
 
 func (p program) Start(s service.Service) error {
+	fmt.Println(s.String() + " started")
+	go p.run()
+	return nil
+}
+
+func (p program) run() {
 	flag.StringVar(&target, "target", target, "host:port to proxy requests to")
 	flag.StringVar(&listen, "listen", listen, "host:port to listen on")
 	flag.StringVar(&protocol, "protocol", protocol, "protocol used by the target")
@@ -167,7 +173,6 @@ func (p program) Start(s service.Service) error {
 	http.HandleFunc("/", handleReverseRequest)
 	log.Println(listen, "-->", target)
 	http.ListenAndServe(listen, nil)
-	return nil
 }
 
 func (p program) Stop(s service.Service) error {
